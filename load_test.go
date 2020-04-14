@@ -3,6 +3,7 @@ package load
 import (
 	"errors"
 	"math/rand"
+	"os"
 	"testing"
 	"time"
 
@@ -45,7 +46,8 @@ func doTestFile(t *testing.T, filename string) (starlark.StringDict, error) {
 	}
 
 	loader := NewLoader(predeclared)
-	loader.Methods = append(loader.Methods, NewLocalMethod("fixtures"))
+	loader.Strategies = append(loader.Strategies, NewLocalMethod("fixtures"))
+	loader.Strategies = append(loader.Strategies, NewRemoteMethod(os.TempDir()))
 	thread := &starlark.Thread{
 		Load: loader.Load,
 	}

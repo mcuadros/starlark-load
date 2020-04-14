@@ -11,14 +11,17 @@ var (
 	ErrCycleLoad      = errors.New("cycle in load graph")
 )
 
-const (
-	ModInfoKey = "modinfo"
-)
+// ResolverStrategy defines a strategy to load modules.
+type ResolverStrategy interface {
+	Resolve(module string) (Module, error)
+}
 
+// Loader is a starlark module loader. The Load module implements the interface
+// of a starlark.Thread.Load function.
 type Loader struct {
 	predeclared starlark.StringDict
 	modules     map[string]*moduleCache
-	Methods     []LoadMethod
+	Strategies  []ResolverStrategy
 }
 
 func NewLoader(predeclared starlark.StringDict) *Loader {
@@ -58,7 +61,7 @@ func (l *Loader) Load(t *starlark.Thread, module string) (starlark.StringDict, e
 }
 
 func (l *Loader) resolve(module string) (m Module, err error) {
-	for _, method := range l.Methods {
+	for _, method := range l.Strategies {
 		m, err = method.Resolve(module)
 		if err == nil {
 			break
@@ -80,14 +83,4 @@ type moduleCache struct {
 	Module  Module
 	Globals starlark.StringDict
 	LoadErr error
-}
-
-type Module interface {
-	Name() string
-	Path() string
-	Load(t *starlark.Thread, predeclared starlark.StringDict) (starlark.StringDict, error)
-}
-
-type LoadMethod interface {
-	Resolve(module string) (Module, error)
 }

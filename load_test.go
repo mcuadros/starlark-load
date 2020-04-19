@@ -7,11 +7,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/mcuadros/starlark-load/starlarktest"
 	"github.com/oklog/ulid"
 	"github.com/stretchr/testify/require"
 	"go.starlark.net/resolve"
 	"go.starlark.net/starlark"
-	"go.starlark.net/starlarktest"
 )
 
 func TestLoaderLoad_Single(t *testing.T) {
@@ -37,12 +37,8 @@ func doTestFile(t *testing.T, filename string) (starlark.StringDict, error) {
 	resolve.AllowGlobalReassign = true
 	resolve.AllowLambda = true
 
-	assert, err := starlarktest.LoadAssertModule()
-	require.NoError(t, err)
-
 	predeclared := starlark.StringDict{
-		"rand":   BuiltinRand(),
-		"assert": assert["assert"],
+		"rand": BuiltinRand(),
 	}
 
 	loader := NewLoader(predeclared)

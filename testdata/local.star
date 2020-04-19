@@ -1,3 +1,5 @@
+load("assert.star", "assert")
+
 # file no extension
 load("fixtures/module", "foo", "modinfo")
 assert.ne(foo, "")

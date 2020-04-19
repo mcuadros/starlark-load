@@ -3,6 +3,7 @@ package load
 import (
 	"errors"
 
+	"github.com/mcuadros/starlark-load/starlarktest"
 	"go.starlark.net/starlark"
 )
 
@@ -32,6 +33,10 @@ func NewLoader(predeclared starlark.StringDict) *Loader {
 }
 
 func (l *Loader) Load(t *starlark.Thread, module string) (starlark.StringDict, error) {
+	if module == "assert.star" {
+		return starlarktest.LoadAssertModule()
+	}
+
 	m, err := l.resolve(module)
 	if err != nil {
 		return nil, err

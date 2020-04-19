@@ -1,3 +1,5 @@
+load("assert.star", "assert")
+
 load("fixtures/module", "foo")
 first = foo
 
